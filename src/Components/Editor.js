@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import Codemirror from "codemirror";
 import "codemirror/lib/codemirror.css";
-import "codemirror/mode/javascript/javascript";
 import "codemirror/theme/dracula.css";
+import "codemirror/mode/javascript/javascript";
 import "codemirror/addon/edit/closetag";
 import "codemirror/addon/edit/closebrackets";
 import ACTIONS from "../Actions";
@@ -23,7 +23,6 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
       );
 
       editorRef.current.on("change", (instance, changes) => {
-        console.log("changes", changes);
         const { origin } = changes;
         const code = instance.getValue();
         onCodeChange(code);

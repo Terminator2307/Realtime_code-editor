@@ -33,7 +33,6 @@ io.on("connection", (socket) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
     const clients = getAllConnectedClients(roomId);
-    // console.log(clients);
     clients.forEach(({ socketId }) => {
       io.to(socketId).emit(ACTIONS.JOINED, {
         clients,
@@ -65,4 +64,4 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Listing on port ${PORT}`));
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`));

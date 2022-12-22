@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import toast from "react-hot-toast";
 import ACTIONS from "../Actions";
-import Client from "../Components/Client";
-import Editor from "../Components/Editor";
+import Client from "../components/Client";
+import Editor from "../components/Editor";
 import { initSocket } from "../socket";
 import {
   useLocation,
@@ -10,15 +11,13 @@ import {
   useParams,
 } from "react-router-dom";
 
-import toast from "react-hot-toast";
-
 const EditorPage = () => {
   const socketRef = useRef(null);
   const codeRef = useRef(null);
   const location = useLocation();
   const { roomId } = useParams();
-
   const reactNavigator = useNavigate();
+  const [clients, setClients] = useState([]);
 
   useEffect(() => {
     const init = async () => {
@@ -42,11 +41,10 @@ const EditorPage = () => {
         ACTIONS.JOINED,
         ({ clients, username, socketId }) => {
           if (username !== location.state?.username) {
-            toast.success(`${username} joined the room`);
+            toast.success(`${username} joined the room.`);
             console.log(`${username} joined`);
           }
           setClients(clients);
-
           socketRef.current.emit(ACTIONS.SYNC_CODE, {
             code: codeRef.current,
             socketId,
@@ -56,7 +54,7 @@ const EditorPage = () => {
 
       // Listening for disconnected
       socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
-        toast.success(`${username} left the room. `);
+        toast.success(`${username} left the room.`);
         setClients((prev) => {
           return prev.filter((client) => client.socketId !== socketId);
         });
@@ -69,8 +67,6 @@ const EditorPage = () => {
       socketRef.current.off(ACTIONS.DISCONNECTED);
     };
   }, []);
-
-  const [clients, setClients] = useState([]);
 
   async function copyRoomId() {
     try {
@@ -87,7 +83,7 @@ const EditorPage = () => {
   }
 
   if (!location.state) {
-    <Navigate to="/" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -105,13 +101,12 @@ const EditorPage = () => {
           </div>
         </div>
         <button className="btn copyBtn" onClick={copyRoomId}>
-          Copy Room ID
+          Copy ROOM ID
         </button>
         <button className="btn leaveBtn" onClick={leaveRoom}>
           Leave
         </button>
       </div>
-
       <div className="editorWrap">
         <Editor
           socketRef={socketRef}
